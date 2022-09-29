@@ -60,12 +60,20 @@ test('order phases for happy path', async () => {
   });
   userEvent.click(confirmOrderButton);
 
+  // expect loading to show
+  const loading = screen.getByText('/loading/i');
+  expect(loading).toBeInTheDocument();
+
   // confirm order number in confirmation page
   // confirmation page is sending a POST request to the server, therefore is async
   const thankYouHeader = await screen.findByRole('heading', {
     name: /thank you/i,
   });
   expect(thankYouHeader).toBeInTheDocument();
+
+  // confirm loading has disappeared
+  const notLoading = screen.queryByText(/loading/i);
+  expect(notLoading).not.toBeInTheDocument();
 
   const orderNumber = await screen.findByText(/order number/i);
   expect(orderNumber).toBeInTheDocument();
@@ -85,4 +93,32 @@ test('order phases for happy path', async () => {
   // wait for items to appear so that Testing Library is ok about what is happening after test is over
   await screen.findByRole('spinbutton', { name: 'Vanilla' });
   await screen.findByRole('Cherries');
+});
+
+test('Toppings do not appear in the summary page if no toppings selected', async () => {
+  render(<App />);
+
+  // add vanilla ice cream scoop
+  const vanillaInput = await screen.findByRole('spinbutton', {
+    name: 'Vanilla',
+  });
+
+  userEvent.clear(vanillaInput);
+  userEvent.type(vanillaInput, '2');
+
+  // find and click summary button
+  const orderSummaryButton = screen.getByRole('button', {
+    name: /order sundae/i,
+  });
+
+  userEvent.click(orderSummaryButton);
+
+  // check scoops are in the summary and toppings are not if not selected
+  const scoopsHeading = screen.getByRole('heading', { name: /scoops: £/i });
+  expect(scoopsHeading).toBeInTheDocument();
+
+  const toppingsHeading = screen.queryByRole('heading', {
+    name: /toppings: £/i,
+  });
+  expect(toppingsHeading).not.toBeInTheDocument();
 });
