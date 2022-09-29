@@ -13,17 +13,21 @@ export default function ScoopOption({
 
   const handleChange = (event) => {
     const currentValue = event.target.value;
-    updateItemCount(name, currentValue);
 
     // use number not string
     const currentValueFloat = parseFloat(currentValue);
+    const valueIsValid =
+      0 <= currentValueFloat &&
+      currentValueFloat <= 10 &&
+      Math.floor(currentValueFloat) === currentValueFloat;
 
     // validate
-    setIsValid(
-      0 <= currentValueFloat &&
-        currentValueFloat <= 10 &&
-        Math.floor(currentValueFloat) === currentValueFloat
-    );
+    setIsValid(valueIsValid);
+
+    // update context only if value is valid
+    if (valueIsValid) {
+      updateItemCount(name, currentValue);
+    }
   };
 
   return (

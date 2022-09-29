@@ -1,3 +1,4 @@
+import userEvent from '@testing-library/user-event';
 import { render, screen } from '../../../test-utils/testing-library-utils';
 import Options from '../Options';
 
@@ -30,4 +31,20 @@ test('displays image for each topping from the server', async () => {
     'M&Ms topping',
     'Hot Fudge topping',
   ]);
+});
+
+test('total does not update if no scoops selected', async () => {
+  render(<Options optionType='scoops' />);
+
+  // check invalid input
+  const vanillaInput = await screen.findByRole('spinbutton', {
+    name: 'Vanilla',
+  });
+
+  userEvent.clear(vanillaInput);
+  userEvent.type(vanillaInput, '-2');
+
+  // make sure total does not update
+  const scoopsSubtotal = screen.getByText('Scoops total: £0.00');
+  expect(scoopsSubtotal).toBeInTheDocument();
 });
