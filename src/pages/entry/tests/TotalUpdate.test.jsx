@@ -12,7 +12,7 @@ test('scoops subtotal when scoops have changed', async () => {
   expect(scoopSubtotal).toHaveTextContent('0.00');
 
   // update vanilla scoops to 1 and check the subtotal
-  const vanillaInput = screen.findByRole('spinbutton', {
+  const vanillaInput = await screen.findByRole('spinbutton', {
     name: /vanilla/i,
   });
   //  if updating a TEXT ELEMENT, better to use clear first as don't know what's been in it before,

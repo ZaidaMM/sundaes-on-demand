@@ -17,7 +17,8 @@ test('handles error for scoops and toppings routes', async () => {
     )
   );
 
-  render(<OrderEntry />);
+  // Use the mock function even if in this case not needed, just to deal with the request when using TypeScript
+  render(<OrderEntry setOrderPhase={jest.fn()} />);
 
   await waitFor(async () => {
     const alerts = await screen.findAllByRole('alert');
